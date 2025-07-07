@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard del Mercado Eléctrico Mayorista</title>
+  <link rel="stylesheet" href="estilo.css">
+  <link rel="shorcut icon" type="image/x-icon" href="logo.ico">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    :root {
+      --color1: #be054e;
+      --color2: #aa0440;
+      --color3: #950332;
+      --color4: #810123;
+      --color5: #6c0015;
+      --blanco: #ffffff;
+      --gris-1: #ebebeb;
+      --gris-2: #d9d9d9;
+      --gris-4: #555655;
+      --gris-5: #231f20;
+    }
+    body {
+      background-color: var(--gris-1);
+      color: var(--gris-5);
+    }
+    .sidebar {
+      background-color: var(--color1);
+      color: var(--blanco);
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .card-custom {
+      background-color: var(--blanco);
+      border: 1px solid var(--gris-2);
+      border-radius: 10px;
+      padding: 10px;
+      margin: 0;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .card-custom:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .card-custom img {
+      width: 100%;
+      height: 250px;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+    .card-custom iframe {
+      width: 100%;
+      height: 250px;
+      border: none;
+      border-radius: 10px;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: 300px;
+      gap: 0;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    .gallery img,
+    .gallery iframe {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+      border: 3px solid var(--color3);
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
+    footer {
+      background-color: var(--color2);
+      color: var(--blanco);
+      text-align: center;
+      padding: 10px;
+      margin-top: 20px;
+    }
+    .card-precio {
+      background-color: var(--color3);
+      color: var(--blanco);
+    }
+    .card-demanda {
+      background-color: var(--color4);
+      color: var(--blanco);
+    }
+    .card-generacion {
+      background-color: var(--color5);
+      color: var(--blanco);
+    }
+    .card-costos {
+      background-color: var(--color2);
+      color: var(--blanco);
+    }
+    .nav-tabs .nav-link.active {
+      background-color: var(--color3);
+      color: white;
+      border-color: var(--color3);
+    }
+    .nav-tabs .nav-link {
+      color: var(--color1);
+    }
+  </style>
+</head>
+<body>
+  <div class="row g-0">
+    <!-- FILTROS -->
+    <div class="col-md-2 sidebar">
+      <img src="graficas/mercado.png" alt="Logo Mercado Eléctrico" class="img-fluid mb-3" />
+      <h4>Mercado Eléctrico Mayorista</h4>
+      <hr style="border-color: var(--blanco)" />
+      <h5>Filtros</h5>
+      <div class="mb-3">
+        <label for="filtroAno" class="form-label">Año</label>
+        <select id="filtroAno" class="form-select">
+          <option value="">Todos</option>
+          <option value="2023">2023</option>
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="filtroMes" class="form-label">Mes</label>
+        <select id="filtroMes" class="form-select">
+          <option value="">Todos</option>
+          <option value="1">Enero</option>
+          <option value="2">Febrero</option>
+          <option value="3">Marzo</option>
+          <option value="4">Abril</option>
+          <option value="5">Mayo</option>
+          <option value="6">Junio</option>
+          <option value="7">Julio</option>
+          <option value="8">Agosto</option>
+          <option value="9">Septiembre</option>
+          <option value="10">Octubre</option>
+          <option value="11">Noviembre</option>
+          <option value="12">Diciembre</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="filtroRegion" class="form-label">Región</label>
+        <select id="filtroRegion" class="form-select">
+          <option value="">Todas</option>
+          <option value="norte">Norte</option>
+          <option value="centro">Centro</option>
+          <option value="sur">Sur</option>
+        </select>
+      </div>
+      <button class="btn btn-light mt-3 w-100" data-bs-toggle="modal" data-bs-target="#modalMetodologia">
+        Metodología y Ciencia de Datos
+      </button>
+      <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#modalConclusiones">
+        Ver Conclusiones
+      </button>
+    </div>
+    
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="col-md-10 p-4">
+      <div class="row mb-4">
+        <div class="col-md-3 card-custom card-precio">
+          Precio Promedio<br><strong>€85.2/MWh</strong>
+          <small class="d-block mt-1">+12% vs mes anterior</small>
+        </div>
+        <div class="col-md-3 card-custom card-demanda">
+          Demanda Máxima<br><strong>42,870 MW</strong>
+          <small class="d-block mt-1">Registrada a las 14:30h</small>
+        </div>
+        <div class="col-md-3 card-custom card-generacion">
+          Generación Total<br><strong>876 GWh</strong>
+          <small class="d-block mt-1">+5% vs mes anterior</small>
+        </div>
+        <div class="col-md-3 card-custom card-costos">
+          Costo Marginal<br><strong>€92.4/MWh</strong>
+          <small class="d-block mt-1">Pico de €120/MWh</small>
+        </div>
+      </div>
+
+      <!-- Pestañas para diferentes vistas -->
+      <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab">Resumen</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab">Precios</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab">Generación</button>
+        </li>
+      </ul>
+      
+      <div class="tab-content" id="myTabContent">
+        <!-- Pestaña Resumen -->
+        <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card-custom" data-bs-toggle="modal" data-bs-target="#modalGraf1">
+                <iframe src="graficas/evolucion_precios.html"></iframe>
+                <h6 class="mt-2">Evolución de Precios Diarios</h6>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card-custom" data-bs-toggle="modal" data-bs-target="#modalGraf2">
+                <iframe src="graficas/demanda_horaria.html"></iframe>
+                <h6 class="mt-2">Curva de Demanda Horaria</h6>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <div class="card-custom" data-bs-toggle="modal" data-bs-target="#modalGraf3">
+                <iframe src="graficas/mix_generacion.html"></iframe>
+                <h6 class="mt-2">Mix de Generación por Tecnología</h6>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card-custom" data-bs-toggle="modal" data-bs-target="#modalGraf4">
+                <iframe src="graficas/costos_marginales.html"></iframe>
+                <h6 class="mt-2">Costos Marginales por Región</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Pestaña Precios -->
+        <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card-custom" data-bs-toggle="modal" data-bs-target="#modalGraf5">
+                <iframe src="graficas/bandas_precio.html"></iframe>
+                <h6 class="mt-2">Bandas de Precio por Hora</h6>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card-custom" data-bs-toggle="modal" data-bs-target="#modalGraf6">
+                <iframe src="graficas/comparacion_regiones.html"></iframe>
+                <h6 class="mt-2">Comparación de Precios por Región</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Pestaña Generación -->
+        <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card-custom" data-bs-toggle="modal" data-bs-target="#modalGraf7">
+                <iframe src="graficas/generacion_tecnologia.html"></iframe>
+                <h6 class="mt-2">Generación por Tecnología</h6>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card-custom" data-bs-toggle="modal" data-bs-target="#modalGraf8">
+                <iframe src="graficas/curva_merit_order.html"></iframe>
+                <h6 class="mt-2">Curva de Merit Order</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    &copy; 2025 - Mercado Eléctrico Mayorista - Ciencia de Datos
+    <small>Nota: estos resultados están basados en datos oficiales del operador del mercado.</small>
+  </footer>
+
+  <!-- MODALES -->
+  <div class="modal fade" id="modalGraf1" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: var(--color2); color: var(--blanco);">
+          <h5 class="modal-title">Evolución de Precios Diarios</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Variación diaria del precio medio del mercado eléctrico mayorista.</p>
+          <iframe src="graficas/evolucion_precios.html" width="100%" height="600" style="border:none;"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalGraf2" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: var(--color2); color: var(--blanco);">
+          <h5 class="modal-title">Curva de Demanda Horaria</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Perfil típico de demanda eléctrica a lo largo del día.</p>
+          <iframe src="graficas/demanda_horaria.html" width="100%" height="600" style="border:none;"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalGraf3" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: var(--color2); color: var(--blanco);">
+          <h5 class="modal-title">Mix de Generación por Tecnología</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Distribución de la generación eléctrica por tipo de tecnología (renovable, térmica, nuclear, etc.).</p>
+          <iframe src="graficas/mix_generacion.html" width="100%" height="600" style="border:none;"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalGraf4" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: var(--color2); color: var(--blanco);">
+          <h5 class="modal-title">Costos Marginales por Región</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Comparación de los costos marginales entre diferentes regiones del sistema eléctrico.</p>
+          <img src="graficas/costos_marginales.png" width="100%" height="600" style="border:none;"></img>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalGraf5" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: var(--color2); color: var(--blanco);">
+          <h5 class="modal-title">Bandas de Precio por Hora</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Distribución de precios en diferentes franjas horarias.</p>
+          <iframe src="graficas/bandas_precio.html" width="100%" height="600" style="border:none;"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalGraf6" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: var(--color2); color: var(--blanco);">
+          <h5 class="modal-title">Comparación de Precios por Región</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Diferencias de precios entre las distintas regiones del mercado eléctrico.</p>
+          <iframe src="graficas/comparacion_regiones.html" width="100%" height="600" style="border:none;"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalGraf7" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: var(--color2); color: var(--blanco);">
+          <h5 class="modal-title">Generación por Tecnología</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Contribución de cada tecnología a la generación total de energía eléctrica.</p>
+          <iframe src="graficas/generacion_tecnologia.html" width="100%" height="600" style="border:none;"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalGraf8" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: var(--color2); color: var(--blanco);">
+          <h5 class="modal-title">Curva de Merit Order</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Orden de mérito de las diferentes tecnologías de generación según sus costos variables.</p>
+          <iframe src="graficas/curva_merit_order.html" width="100%" height="600" style="border:none;"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalMetodologia" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: var(--color2); color: var(--blanco);">
+          <h5 class="modal-title">Metodología y Ciencia de Datos</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <h6>Técnicas Utilizadas</h6>
+          <table class="table table-striped">
+            <thead>
+              <tr><th>Técnica</th><th>Descripción</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Integración de datos</td><td>Agregación de datos de múltiples fuentes del mercado</td></tr>
+              <tr><td>Análisis de series temporales</td><td>Identificación de patrones de precios y demanda</td></tr>
+              <tr><td>Modelado estadístico</td><td>Análisis de correlación entre variables del mercado</td></tr>
+              <tr><td>Visualización avanzada</td><td>Representación clara de datos complejos</td></tr>
+            </tbody>
+          </table>
+          <h6 class="mt-4">Flujo de Datos</h6>
+          <p>
+            Este dashboard analiza datos del mercado eléctrico mediante:
+            <ol>
+              <li>Recolección de datos de precios y generación</li>
+              <li>Integración con datos de demanda y costos</li>
+              <li>Procesamiento y limpieza de los datos</li>
+              <li>Análisis de tendencias y patrones</li>
+              <li>Modelado de relaciones entre variables</li>
+              <li>Visualización interactiva para toma de decisiones</li>
+            </ol>
+            Los datos consideran variables como precios horarios, demanda, generación por tecnología, costos marginales y restricciones de red.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalConclusiones" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: var(--color2); color: var(--blanco);">
+          <h5 class="modal-title">Conclusiones</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Estos resultados permiten analizar el comportamiento del mercado eléctrico mayorista y entender sus dinámicas.
+            Los datos reflejan las condiciones reales del mercado en el periodo seleccionado.
+          </p>
+          <p>
+            <strong>Conclusiones clave:</strong>
+          </p>
+          <ul>
+            <li>Los precios muestran mayor volatilidad en horas punta</li>
+            <li>La generación renovable cubre el 45% de la demanda</li>
+            <li>Se observan diferencias regionales en precios debido a restricciones de red</li>
+            <li>Las tecnologías de menor costo fijan el precio marginal en el 78% de las horas</li>
+            <li>La demanda máxima se registra entre las 14:00 y 15:00 horas</li>
+          </ul>
+          <div class="alert alert-info mt-3">
+            <strong>Nota:</strong> Estos resultados pueden variar según condiciones del mercado y disponibilidad de generación.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
